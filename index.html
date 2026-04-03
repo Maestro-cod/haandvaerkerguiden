@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HåndværkerGuiden Danmark – Find lokale fagfolk i din by</title>
-  <meta name="description" content="Find de bedste håndværkere i hele Danmark. København, Aarhus, Odense, Aalborg og mere. Elektrikere, VVS, tømrere, malere og meget mere." />
+  <title>HyrHåndværker.dk – Find og hyr lokale fagfolk i din by</title>
+  <meta name="description" content="Find og hyr de bedste håndværkere i hele Danmark. København, Aarhus, Odense, Aalborg og mere. Elektrikere, VVS, tømrere, malere og meget mere." />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -15,7 +15,7 @@
   <div class="container header-inner">
     <div class="logo">
       <span class="logo-icon">🔧</span>
-      <span class="logo-text">HåndværkerGuiden<span class="logo-city">Danmark</span></span>
+      <span class="logo-text">HyrHåndværker<span class="logo-city">.dk</span></span>
     </div>
     <nav class="main-nav" id="main-nav">
       <a href="#kategorier">Kategorier</a>
@@ -31,11 +31,12 @@
 <!-- HERO -->
 <section class="hero">
   <div class="container">
-    <h1>Find den rette håndværker<br><span class="hero-highlight">i hele Danmark</span></h1>
+    <h1>Find og hyr en håndværker<br><span class="hero-highlight">i hele Danmark</span></h1>
     <p class="hero-sub">Lokale fagfolk i din by — elektrikere, VVS, tømrere, malere og mere</p>
     <div class="search-bar">
       <select id="city-filter" onchange="filterListings()">
         <option value="">Alle byer</option>
+        <option value="nyborg">Nyborg</option>
         <option value="københavn">København</option>
         <option value="aarhus">Aarhus</option>
         <option value="odense">Odense</option>
@@ -131,7 +132,7 @@
 <section class="jobrequest-section" id="send-opgave">
   <div class="container">
     <h2 class="section-title">Beskriv din opgave</h2>
-    <p class="section-sub">Udfyld formularen — vi videresender til relevante håndværkere i dit område</p>
+    <p class="section-sub">Udfyld formularen — vi videresender til relevante håndværkere i dit område. Din e-mail-klient åbnes med en færdigskrevet besked.</p>
     <div class="jobrequest-card">
       <div class="form-row">
         <div class="form-group">
@@ -165,7 +166,7 @@
 <!-- PRICING -->
 <section class="pricing-section" id="bliv-listesat">
   <div class="container">
-    <h2 class="section-title">Bliv listesat på HåndværkerGuiden</h2>
+    <h2 class="section-title">Bliv listesat på HyrHåndværker.dk</h2>
     <p class="section-sub">Nå ud til kunder i hele Danmark, der aktivt søger håndværkere i din by</p>
     <div class="pricing-grid">
 
@@ -291,7 +292,7 @@
       <div class="chat-header-info">
         <span class="chat-avatar">🔧</span>
         <div>
-          <div style="font-weight:700">HåndværkerGuiden</div>
+          <div style="font-weight:700">HyrHåndværker</div>
           <div style="font-size:.75rem;opacity:.8">Assistent · svarer øjeblikkeligt</div>
         </div>
       </div>
@@ -315,8 +316,8 @@
 <footer class="site-footer">
   <div class="container footer-inner">
     <div class="footer-brand">
-      <span class="logo-icon">🔧</span> HåndværkerGuiden Danmark
-      <p>Lokale fagfolk i hele Danmark — nemt at finde, nemt at kontakte.</p>
+      <span class="logo-icon">🔧</span> HyrHåndværker.dk
+      <p>Find og hyr lokale fagfolk i hele Danmark — nemt at finde, nemt at kontakte.</p>
     </div>
     <div class="footer-links">
       <strong>For firmaer</strong>
@@ -339,7 +340,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 HåndværkerGuiden Danmark · <a href="mailto:stefymaestro@proton.me">stefymaestro@proton.me</a> · MobilePay: 50 35 83 67 · <a href="privacy.html">Privatlivspolitik</a></p>
+    <p>© 2026 HyrHåndværker.dk · <a href="mailto:stefymaestro@proton.me">stefymaestro@proton.me</a> · MobilePay: 50 35 83 67 · <a href="privacy.html">Privatlivspolitik</a></p>
   </div>
 </footer>
 

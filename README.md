@@ -1,18 +1,19 @@
-# HåndværkerGuiden Danmark
+# HyrHåndværker.dk
 
-Danish tradesperson directory covering 14 major cities in Denmark.
+Find og hyr lokale håndværkere i hele Danmark.
+
+**Live:** [hyrhaandvaerker.dk](https://hyrhaandvaerker.dk)
 
 ## Features
-- Search by city and trade
+- Search and filter by city and trade
 - Interactive map (Leaflet + OpenStreetMap)
-- 3-tier pricing: Basic (99 kr), Gold (199 kr), Premium (299 kr)
 - MobilePay payment integration
-- AI chat assistant
-- Job request form
-- Admin panel with login
+- Chat assistant
+- Admin panel for managing listings
+- Responsive design
 
-## Cities covered
-København · Aarhus · Odense · Aalborg · Esbjerg · Vejle · Randers · Roskilde · Herning · Silkeborg · Horsens · Kolding · Næstved · Viborg
-
-## Contact
-stefymaestro@proton.me · MobilePay: 50 35 83 67
+## Tech
+- Static HTML/CSS/JS
+- Hosted on GitHub Pages
+- DNS via Cloudflare (free)
+- Domain: hyrhaandvaerker.dk

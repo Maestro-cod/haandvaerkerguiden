@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin – HåndværkerGuiden Danmark</title>
+  <title>Admin – HyrHåndværker.dk</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -125,7 +125,7 @@
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="topbar-logo">🔧 HåndværkerGuiden <span>Danmark</span> <span style="color:#475569;font-weight:400;margin-left:6px;font-size:.85rem">Admin</span></div>
+  <div class="topbar-logo">🔧 HyrHåndværker<span>.dk</span> <span style="color:#475569;font-weight:400;margin-left:6px;font-size:.85rem">Admin</span></div>
   <div class="topbar-right">
     <a href="index.html" target="_blank">🌐 Se siden</a>
     <a onclick="logout()">← Log ud</a>
@@ -148,7 +148,7 @@
     <!-- OVERVIEW -->
     <div id="tab-overview" class="tab-panel active">
       <h2 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;color:var(--navy)">God dag 👋</h2>
-      <p style="color:var(--muted);margin-bottom:28px;font-size:.95rem">Her er et overblik over HåndværkerGuiden Danmark.</p>
+      <p style="color:var(--muted);margin-bottom:28px;font-size:.95rem">Her er et overblik over HyrHåndværker.dk.</p>
       <div class="stat-cards">
         <div class="stat-card blue"><div class="val" id="ov-total">0</div><div class="lbl">Firmaer i alt</div></div>
         <div class="stat-card gold"><div class="val" id="ov-featured">0</div><div class="lbl">Fremhævet (betalt)</div></div>
@@ -289,71 +289,14 @@ function logout() {
 }
 
 // ============================================================
-// DEFAULT DATA — alle 44 firmaer, alle byer
+// DEFAULT DATA — rigtige firmaer
 // ============================================================
 const DEFAULT_LISTINGS = [
-  // KØBENHAVN
-  { id:1,  city:'københavn', featured:true,  name:"Hovedstaden El-Service A/S",    trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør med speciale i boligrenovering og erhverv i hele Storkøbenhavn. Hurtigt tilbud og fleksible tider.",   phone:"32 12 34 56", website:"https://example.dk", area:"København & Frederiksberg", rating:4.9, reviewCount:47, lat:55.676, lng:12.568 },
-  { id:2,  city:'københavn', featured:true,  name:"KBH VVS Specialister ApS",      trade:"vvs",        tradeLabel:"VVS-installatør", desc:"Autoriseret VVS-firma med 20 år i branchen. Badeværelsesrenovering, varmepumper og gulvvarme til fast og fair pris.",           phone:"33 23 45 67", website:"https://example.dk", area:"Hele København og omegn",   rating:4.8, reviewCount:38, lat:55.680, lng:12.574 },
-  { id:3,  city:'københavn', featured:true,  name:"Nordsjællands Tømrer ApS",      trade:"tømrer",     tradeLabel:"Tømrer",          desc:"Erfarne tømrere og snedkere. Facaderenovering, kviste, altaner og carporte. Gratis besigtigelse.",                                phone:"28 99 11 44", website:"https://example.dk", area:"København N, Brønshøj",     rating:4.7, reviewCount:31, lat:55.690, lng:12.543 },
-  { id:4,  city:'københavn', featured:false, name:"Nørrebro Malerfirma",            trade:"maler",      tradeLabel:"Maler",           desc:"", phone:"26 11 22 33", website:"", area:"Nørrebro, Østerbro, Indre By", rating:4.5, reviewCount:12, lat:55.692, lng:12.548 },
-  { id:5,  city:'københavn', featured:false, name:"KBH Kloakmester Service",        trade:"kloak",      tradeLabel:"Kloakmester",     desc:"", phone:"32 88 77 66", website:"", area:"Hele København",              rating:4.3, reviewCount:9,  lat:55.672, lng:12.558 },
-  { id:6,  city:'københavn', featured:false, name:"Capital Glarmester",             trade:"glarmester", tradeLabel:"Glarmester",      desc:"", phone:"33 44 55 66", website:"", area:"København og Frederiksberg",  rating:4.2, reviewCount:7,  lat:55.668, lng:12.571 },
-  // AARHUS
-  { id:7,  city:'aarhus', featured:true,  name:"Aarhus El-Service ApS",            trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør med over 15 års erfaring. Alt fra fejlfinding til nye installationer i parcelhuse og erhverv.",         phone:"86 12 34 56", website:"https://example.dk", area:"Aarhus C & omegn",          rating:4.8, reviewCount:23, lat:56.157, lng:10.211 },
-  { id:8,  city:'aarhus', featured:true,  name:"Hansen VVS & Badeværelse",         trade:"vvs",        tradeLabel:"VVS-installatør", desc:"Autoriseret VVS-firma. Specialister i badeværelsesrenovering, gulvvarme og varmepumper. Hurtig respons på akutte opgaver.",      phone:"87 65 43 21", website:"https://example.dk", area:"Aarhus N, Risskov, Lystrup", rating:4.9, reviewCount:31, lat:56.187, lng:10.201 },
-  { id:9,  city:'aarhus', featured:true,  name:"Mikkelsen Tømrer & Snedker",       trade:"tømrer",     tradeLabel:"Tømrer",          desc:"Kvalitetstømreri til private og boligforeninger. Tagrenoveringer, kviste, carporte og terrasser. Gratis tilbud.",                  phone:"23 45 67 89", website:"https://example.dk", area:"Hele Aarhus Kommune",        rating:4.7, reviewCount:18, lat:56.163, lng:10.182 },
-  { id:10, city:'aarhus', featured:true,  name:"Brdr. Andersen Malerfirma",        trade:"maler",      tradeLabel:"Maler",           desc:"Professionelt malerfirma med fokus på grundig forbehandling og holdbare resultater. Indendørs, udendørs og tapetsering.",          phone:"40 20 10 30", website:"https://example.dk", area:"Aarhus S, Viby, Brabrand",   rating:4.6, reviewCount:14, lat:56.120, lng:10.169 },
-  { id:11, city:'aarhus', featured:false, name:"Larsen El",                        trade:"elektriker", tradeLabel:"Elektriker",      desc:"", phone:"86 99 11 22", website:"", area:"Aarhus V",                   rating:4.2, reviewCount:7,  lat:56.154, lng:10.168 },
-  { id:12, city:'aarhus', featured:false, name:"TAG & ISOLERING Aarhus",           trade:"tag",        tradeLabel:"Tag & Isolering", desc:"", phone:"71 44 55 66", website:"", area:"Hele Østjylland",            rating:4.4, reviewCount:11, lat:56.180, lng:10.225 },
-  { id:13, city:'aarhus', featured:false, name:"Kloakmester Søren Nielsen",        trade:"kloak",      tradeLabel:"Kloakmester",     desc:"", phone:"86 33 11 22", website:"", area:"Aarhus, Odder, Horsens",    rating:4.0, reviewCount:6,  lat:56.139, lng:10.204 },
-  // ODENSE
-  { id:14, city:'odense', featured:true,  name:"Odense El & Teknik A/S",           trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør på Fyn med speciale i smart home, solceller og ladestandere til elbil.",                               phone:"66 12 34 56", website:"https://example.dk", area:"Odense C og NV",            rating:4.7, reviewCount:29, lat:55.396, lng:10.388 },
-  { id:15, city:'odense', featured:true,  name:"Fyns VVS & Energi ApS",            trade:"vvs",        tradeLabel:"VVS-installatør", desc:"Autoriseret VVS på Fyn. Varmepumper, solvarme og energirenovering til private og boligforeninger.",                              phone:"63 23 45 67", website:"https://example.dk", area:"Odense og hele Fyn",        rating:4.8, reviewCount:22, lat:55.405, lng:10.375 },
-  { id:16, city:'odense', featured:false, name:"Andersen Maler Odense",            trade:"maler",      tradeLabel:"Maler",           desc:"", phone:"65 99 11 22", website:"", area:"Odense og omegn",            rating:4.4, reviewCount:8,  lat:55.389, lng:10.395 },
-  { id:17, city:'odense', featured:false, name:"Fyn Tømrermester",                 trade:"tømrer",     tradeLabel:"Tømrer",          desc:"", phone:"24 55 66 77", website:"", area:"Odense og Middelfart",      rating:4.2, reviewCount:6,  lat:55.385, lng:10.380 },
-  { id:18, city:'odense', featured:false, name:"Odense Murerforretning",           trade:"murer",      tradeLabel:"Murer",           desc:"", phone:"66 14 22 33", website:"", area:"Odense og Kerteminde",      rating:4.3, reviewCount:5,  lat:55.400, lng:10.404 },
-  // AALBORG
-  { id:19, city:'aalborg', featured:true,  name:"Aalborg El-Installation ApS",     trade:"elektriker", tradeLabel:"Elektriker",      desc:"Nordjyllands førende elinstallatør. Boliger, erhverv og industrianlæg. Tilbud inden 24 timer.",                                  phone:"98 12 34 56", website:"https://example.dk", area:"Aalborg og omegn",          rating:4.8, reviewCount:34, lat:57.048, lng:9.921 },
-  { id:20, city:'aalborg', featured:true,  name:"Nord VVS & Varmeteknik",          trade:"vvs",        tradeLabel:"VVS-installatør", desc:"Autoriseret VVS i Nordjylland. Specialister i varmepumper, badeværelse og fjernvarmetilslutning.",                               phone:"98 65 43 21", website:"https://example.dk", area:"Aalborg, Nørresundby",      rating:4.7, reviewCount:19, lat:57.053, lng:9.930 },
-  { id:21, city:'aalborg', featured:false, name:"Nordjysk Malerfirma",             trade:"maler",      tradeLabel:"Maler",           desc:"", phone:"30 11 22 33", website:"", area:"Aalborg og Nørresundby",   rating:4.3, reviewCount:7,  lat:57.043, lng:9.910 },
-  { id:22, city:'aalborg', featured:false, name:"Aalborg Tømrer & Snedker",        trade:"tømrer",     tradeLabel:"Tømrer",          desc:"", phone:"42 55 66 77", website:"", area:"Aalborg og Jammerbugt",   rating:4.1, reviewCount:5,  lat:57.040, lng:9.935 },
-  // ESBJERG
-  { id:23, city:'esbjerg', featured:true,  name:"Vestjyllands El-Service ApS",     trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør i Esbjerg. Industriel, marin og privat installation. 24/7 vagtservice.",                               phone:"75 12 34 56", website:"https://example.dk", area:"Esbjerg, Fanø og Varde",    rating:4.6, reviewCount:15, lat:55.476, lng:8.459 },
-  { id:24, city:'esbjerg', featured:false, name:"Esbjerg VVS & Kloak",             trade:"vvs",        tradeLabel:"VVS-installatør", desc:"", phone:"75 65 43 21", website:"", area:"Esbjerg og Ribe",          rating:4.2, reviewCount:8,  lat:55.470, lng:8.452 },
-  { id:25, city:'esbjerg', featured:false, name:"Sønderjyllands Maler",            trade:"maler",      tradeLabel:"Maler",           desc:"", phone:"74 12 33 44", website:"", area:"Esbjerg og Kolding",       rating:4.1, reviewCount:4,  lat:55.482, lng:8.470 },
-  // VEJLE
-  { id:26, city:'vejle', featured:true,  name:"Vejle El & Smart Home",             trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elektriker med speciale i smart home, solceller og ladestandere. Betjener hele Trekantområdet.",                     phone:"75 82 34 56", website:"https://example.dk", area:"Vejle og Trekantområdet",  rating:4.7, reviewCount:21, lat:55.709, lng:9.536 },
-  { id:27, city:'vejle', featured:true,  name:"Trekant VVS & Badeværelse",         trade:"vvs",        tradeLabel:"VVS-installatør", desc:"Autoriseret VVS til private og erhverv i Trekantområdet. Varmepumper, badeværelser og gulvvarme.",                               phone:"75 82 65 43", website:"https://example.dk", area:"Vejle, Kolding, Fredericia", rating:4.6, reviewCount:17, lat:55.715, lng:9.528 },
-  { id:28, city:'vejle', featured:false, name:"Vejle Tømrerfirma",                 trade:"tømrer",     tradeLabel:"Tømrer",          desc:"", phone:"75 82 11 22", website:"", area:"Vejle og Hedensted",       rating:4.3, reviewCount:8,  lat:55.703, lng:9.548 },
-  // RANDERS
-  { id:29, city:'randers', featured:true,  name:"Randers El-Mester ApS",           trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør i Randers og omegn. Bolig, landbrug og erhverv. Akutservice.",                                        phone:"86 42 34 56", website:"https://example.dk", area:"Randers og Favrskov",      rating:4.6, reviewCount:13, lat:56.461, lng:10.036 },
-  { id:30, city:'randers', featured:false, name:"Randers VVS Service",             trade:"vvs",        tradeLabel:"VVS-installatør", desc:"", phone:"86 42 65 43", website:"", area:"Randers og Hobro",         rating:4.2, reviewCount:6,  lat:56.455, lng:10.045 },
-  // ROSKILDE
-  { id:31, city:'roskilde', featured:true,  name:"Roskilde El & Teknik",           trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør vest for København. Specialister i energirenovering og EV-ladestandere.",                              phone:"46 32 34 56", website:"https://example.dk", area:"Roskilde og Lejre",         rating:4.6, reviewCount:17, lat:55.642, lng:12.087 },
-  { id:32, city:'roskilde', featured:false, name:"Sjællandsk Malerfirma",          trade:"maler",      tradeLabel:"Maler",           desc:"", phone:"46 32 65 43", website:"", area:"Roskilde og Holbæk",       rating:4.4, reviewCount:9,  lat:55.648, lng:12.095 },
-  // HERNING
-  { id:33, city:'herning', featured:true,  name:"Midtjyllands El & Teknik",        trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør i Midt- og Vestjylland. Bolig, landbrug og erhverv. 24/7.",                                            phone:"97 22 34 56", website:"https://example.dk", area:"Herning og Ikast",          rating:4.5, reviewCount:13, lat:56.139, lng:8.973 },
-  { id:34, city:'herning', featured:false, name:"Herning VVS Service",             trade:"vvs",        tradeLabel:"VVS-installatør", desc:"", phone:"97 22 65 43", website:"", area:"Herning og Holstebro",     rating:4.2, reviewCount:6,  lat:56.132, lng:8.980 },
-  // SILKEBORG
-  { id:35, city:'silkeborg', featured:true,  name:"Silkeborg El-Service",          trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør i hjertet af Jylland. Specialister i energioptimering og solceller.",                                 phone:"86 82 34 56", website:"https://example.dk", area:"Silkeborg og Skanderborg",  rating:4.7, reviewCount:16, lat:56.172, lng:9.551 },
-  { id:36, city:'silkeborg', featured:false, name:"Silkeborg Tømrerfirma",         trade:"tømrer",     tradeLabel:"Tømrer",          desc:"", phone:"86 82 65 43", website:"", area:"Silkeborg og Viborg",      rating:4.3, reviewCount:7,  lat:56.165, lng:9.558 },
-  // HORSENS
-  { id:37, city:'horsens', featured:true,  name:"Horsens El-Installatør",          trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør i Horsens. Bolig, erhverv og havneområdet. Hurtigt tilbud.",                                          phone:"75 62 34 56", website:"https://example.dk", area:"Horsens og Hedensted",     rating:4.5, reviewCount:11, lat:55.860, lng:9.844 },
-  { id:38, city:'horsens', featured:false, name:"Horsens VVS & Varme",             trade:"vvs",        tradeLabel:"VVS-installatør", desc:"", phone:"75 62 65 43", website:"", area:"Horsens og Skanderborg",   rating:4.2, reviewCount:5,  lat:55.866, lng:9.851 },
-  // KOLDING
-  { id:39, city:'kolding', featured:true,  name:"Kolding El & Teknik ApS",         trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør med base i Kolding. Servicerer hele Syd- og Sønderjylland.",                                          phone:"75 52 34 56", website:"https://example.dk", area:"Kolding og Haderslev",     rating:4.6, reviewCount:14, lat:55.491, lng:9.472 },
-  { id:40, city:'kolding', featured:false, name:"Kolding Murerforretning",         trade:"murer",      tradeLabel:"Murer",           desc:"", phone:"75 52 65 43", website:"", area:"Kolding og omegn",         rating:4.1, reviewCount:6,  lat:55.498, lng:9.480 },
-  // NÆSTVED
-  { id:41, city:'næstved', featured:true,  name:"Næstved El-Service",              trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør på Sydsjælland. Bolig, erhverv og landbrug.",                                                         phone:"55 72 34 56", website:"https://example.dk", area:"Næstved og Vordingborg",   rating:4.5, reviewCount:10, lat:55.230, lng:11.762 },
-  { id:42, city:'næstved', featured:false, name:"Sydsjællands VVS",               trade:"vvs",        tradeLabel:"VVS-installatør", desc:"", phone:"55 72 65 43", website:"", area:"Næstved og Faxe",          rating:4.0, reviewCount:4,  lat:55.236, lng:11.770 },
-  // VIBORG
-  { id:43, city:'viborg', featured:true,  name:"Viborg El & Kraft ApS",            trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør centralt i Jylland. Bolig, landbrug og industri.",                                                     phone:"86 62 34 56", website:"https://example.dk", area:"Viborg og Skive",           rating:4.6, reviewCount:12, lat:56.453, lng:9.403 },
-  { id:44, city:'viborg', featured:false, name:"Viborg Tømrermester",              trade:"tømrer",     tradeLabel:"Tømrer",          desc:"", phone:"86 62 65 43", website:"", area:"Viborg og Bjerringbro",    rating:4.2, reviewCount:5,  lat:56.459, lng:9.412 },
+  { id:1, city:'nyborg', featured:true, name:"Maestro Tømrer & Snedker", trade:"tømrer", tradeLabel:"Tømrer", desc:"Erfaren tømrer med over 20 års erfaring. Gipsarbejde, facadebeklædning, vinduer og døre, gulve og tagarbejde. Arbejder i hele Danmark.", phone:"50 35 83 67", website:"https://hyrhaandvaerker.dk", area:"Nyborg, Fyn og hele Danmark", rating:5.0, reviewCount:1, lat:55.312, lng:10.790 },
 ];
 
 const TRADE_LABELS = { elektriker:'Elektriker', vvs:'VVS-installatør', tømrer:'Tømrer', maler:'Maler', murer:'Murer', tag:'Tag & Isolering', gulv:'Gulvlægger', kloak:'Kloakmester', glarmester:'Glarmester' };
-const CITY_LABELS  = { københavn:'København', aarhus:'Aarhus', odense:'Odense', aalborg:'Aalborg', esbjerg:'Esbjerg', vejle:'Vejle', randers:'Randers', roskilde:'Roskilde', herning:'Herning', silkeborg:'Silkeborg', horsens:'Horsens', kolding:'Kolding', næstved:'Næstved', viborg:'Viborg' };
+const CITY_LABELS  = { nyborg:'Nyborg', københavn:'København', aarhus:'Aarhus', odense:'Odense', aalborg:'Aalborg', esbjerg:'Esbjerg', vejle:'Vejle', randers:'Randers', roskilde:'Roskilde', herning:'Herning', silkeborg:'Silkeborg', horsens:'Horsens', kolding:'Kolding', næstved:'Næstved', viborg:'Viborg' };
 
 function getListings() {
   const s = localStorage.getItem('hg_listings');
@@ -594,7 +537,7 @@ function exportData() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = `haandvaerkerguiden-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.download = `hyrhaandvaerker-backup-${new Date().toISOString().slice(0,10)}.json`;
   a.click();
 }
 
