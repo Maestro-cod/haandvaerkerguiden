@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin – HåndværkerGuiden Danmark</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --navy:#0f172a; --navy-2:#1e293b; --navy-3:#334155;
+      --gold:#f59e0b; --gold-dark:#d97706; --gold-light:#fef3c7;
+      --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f8fafc; --white:#fff;
+      --green:#059669; --red:#dc2626; --orange:#f59e0b; --purple:#7c3aed;
+      --link:#2563eb;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    /* TOPBAR */
+    .topbar { background: var(--navy); color: #fff; padding: 0 24px; height: 60px; display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid var(--gold); }
+    .topbar-logo { font-weight: 800; font-size: 1rem; display: flex; align-items: center; gap: 8px; color: var(--white); }
+    .topbar-logo span { color: var(--gold); }
+    .topbar-right { display: flex; align-items: center; gap: 16px; font-size: .88rem; color: #94a3b8; }
+    .topbar-right a { color: #94a3b8; text-decoration: none; cursor: pointer; transition: color .15s; }
+    .topbar-right a:hover { color: var(--gold); }
+
+    /* LAYOUT */
+    .layout { display: flex; min-height: calc(100vh - 60px); }
+    .sidebar { width: 220px; background: var(--navy-2); border-right: 1px solid var(--navy-3); padding: 24px 0; flex-shrink: 0; }
+    .sidebar a { display: flex; align-items: center; gap: 10px; padding: 11px 24px; font-size: .92rem; font-weight: 500; color: #94a3b8; text-decoration: none; cursor: pointer; transition: all .12s; border-left: 3px solid transparent; }
+    .sidebar a:hover { background: rgba(245,158,11,.08); color: var(--gold); }
+    .sidebar a.active { background: rgba(245,158,11,.12); color: var(--gold); border-left-color: var(--gold); font-weight: 700; }
+    .sidebar-section { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--navy-3); padding: 18px 24px 6px; }
+    .main { flex: 1; padding: 32px; overflow-y: auto; }
+
+    /* STAT CARDS */
+    .stat-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; border-top: 3px solid var(--border); }
+    .stat-card .val { font-size: 2.2rem; font-weight: 900; letter-spacing: -.02em; }
+    .stat-card .lbl { font-size: .82rem; color: var(--muted); margin-top: 4px; }
+    .stat-card.blue   { border-top-color: var(--link); } .stat-card.blue   .val { color: var(--link); }
+    .stat-card.gold   { border-top-color: var(--gold); } .stat-card.gold   .val { color: var(--gold-dark); }
+    .stat-card.green  { border-top-color: var(--green); } .stat-card.green  .val { color: var(--green); }
+    .stat-card.purple { border-top-color: var(--purple); } .stat-card.purple .val { color: var(--purple); }
+
+    /* SECTIONS */
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+    .section-head h2 { font-size: 1.25rem; font-weight: 800; }
+    .tab-panel { display: none; } .tab-panel.active { display: block; }
+
+    /* TABLE */
+    .table-wrap { background: var(--white); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.05); }
+    table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+    thead { background: var(--bg); }
+    th { padding: 12px 14px; text-align: left; font-weight: 700; color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; border-bottom: 1px solid var(--border); }
+    td { padding: 13px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #fafbfc; }
+
+    /* BADGES */
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: .75rem; font-weight: 700; }
+    .badge.featured { background: var(--gold-light); color: #92400e; }
+    .badge.regular  { background: #f1f5f9; color: #64748b; }
+    .badge.pending  { background: #fef3c7; color: #92400e; }
+    .badge.active   { background: #d1fae5; color: #065f46; }
+    .badge.basic    { background: #f1f5f9; color: #374151; }
+    .badge.gold     { background: var(--gold-light); color: #92400e; }
+    .badge.premium  { background: #ede9fe; color: #5b21b6; }
+    .city-badge { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: .72rem; font-weight: 600; background: #eff6ff; color: var(--link); border: 1px solid #bfdbfe; }
+
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-size: .83rem; font-weight: 700; cursor: pointer; border: none; transition: all .15s; text-decoration: none; }
+    .btn-gold   { background: var(--gold); color: var(--navy); }
+    .btn-gold:hover   { background: var(--gold-dark); }
+    .btn-navy   { background: var(--navy); color: #fff; }
+    .btn-navy:hover   { background: var(--navy-2); }
+    .btn-green  { background: var(--green); color: #fff; }
+    .btn-green:hover  { background: #047857; }
+    .btn-red    { background: var(--red); color: #fff; }
+    .btn-red:hover    { background: #b91c1c; }
+    .btn-ghost  { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover  { background: var(--border); }
+
+    /* MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55); z-index: 999; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+    .modal-overlay.open { display: flex; }
+    .modal { background: var(--white); border-radius: 18px; padding: 36px 32px; max-width: 560px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.3); position: relative; }
+    .modal h3 { font-size: 1.25rem; font-weight: 800; margin-bottom: 22px; color: var(--navy); }
+    .modal-close { position: absolute; top: 16px; right: 16px; background: var(--bg); border: none; border-radius: 50%; width: 32px; height: 32px; cursor: pointer; font-size: .95rem; color: var(--muted); display: flex; align-items: center; justify-content: center; transition: background .15s; }
+    .modal-close:hover { background: var(--border); }
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-size: .82rem; font-weight: 700; margin-bottom: 5px; color: var(--text); }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: .9rem; font-family: inherit; outline: none; transition: border-color .15s; background: var(--white);
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(245,158,11,.1); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .form-check { display: flex; align-items: center; gap: 8px; font-size: .9rem; margin-bottom: 14px; padding: 12px; background: var(--gold-light); border-radius: 8px; border: 1px solid #fcd34d; }
+    .form-check input { width: auto; }
+    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state p { font-size: .95rem; }
+
+    .search-input { padding: 9px 14px; border: 1.5px solid var(--border); border-radius: 8px; font-size: .9rem; outline: none; width: 240px; transition: border-color .15s; background: var(--white); }
+    .search-input:focus { border-color: var(--gold); }
+
+    .quick-actions { background: var(--white); border: 1px solid var(--border); border-radius: 14px; padding: 24px; }
+    .quick-actions h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--navy); }
+
+    .tip-box { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px 18px; font-size: .88rem; color: #1e40af; margin-bottom: 20px; line-height: 1.6; }
+    .tip-box strong { font-weight: 700; }
+
+    @media(max-width:768px) {
+      .layout { flex-direction: column; }
+      .sidebar { width: 100%; padding: 8px 0; display: flex; overflow-x: auto; border-right: none; border-bottom: 1px solid var(--navy-3); }
+      .sidebar a { white-space: nowrap; border-left: none; border-bottom: 3px solid transparent; }
+      .sidebar a.active { border-left-color: transparent; border-bottom-color: var(--gold); }
+      .main { padding: 16px; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">🔧 HåndværkerGuiden <span>Danmark</span> <span style="color:#475569;font-weight:400;margin-left:6px;font-size:.85rem">Admin</span></div>
+  <div class="topbar-right">
+    <a href="index.html" target="_blank">🌐 Se siden</a>
+    <a onclick="logout()">← Log ud</a>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-section">Dashboard</div>
+    <a onclick="showTab('tab-overview')" id="nav-overview" class="active">📊 Oversigt</a>
+    <div class="sidebar-section">Indhold</div>
+    <a onclick="showTab('tab-listings')" id="nav-listings">🔧 Håndværkere</a>
+    <a onclick="showTab('tab-signups')" id="nav-signups">📥 Tilmeldinger <span id="pending-badge" style="background:var(--gold);color:var(--navy);border-radius:10px;padding:1px 7px;font-size:.72rem;margin-left:4px;font-weight:800"></span></a>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div id="tab-overview" class="tab-panel active">
+      <h2 style="font-size:1.5rem;font-weight:900;margin-bottom:6px;color:var(--navy)">God dag 👋</h2>
+      <p style="color:var(--muted);margin-bottom:28px;font-size:.95rem">Her er et overblik over HåndværkerGuiden Danmark.</p>
+      <div class="stat-cards">
+        <div class="stat-card blue"><div class="val" id="ov-total">0</div><div class="lbl">Firmaer i alt</div></div>
+        <div class="stat-card gold"><div class="val" id="ov-featured">0</div><div class="lbl">Fremhævet (betalt)</div></div>
+        <div class="stat-card green"><div class="val" id="ov-signups">0</div><div class="lbl">Nye tilmeldinger</div></div>
+        <div class="stat-card purple"><div class="val" id="ov-cities">0</div><div class="lbl">Byer dækket</div></div>
+      </div>
+      <div class="tip-box">💡 <strong>Tip:</strong> Ændringer du gemmer her vises automatisk på den offentlige side. Tilføj nye firmaer og marker dem som "Fremhævet" for at de vises øverst i søgeresultater.</div>
+      <div class="quick-actions">
+        <h3>Hurtige handlinger</h3>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <button class="btn btn-gold" onclick="openAddModal()">＋ Tilføj firma</button>
+          <button class="btn btn-ghost" onclick="showTab('tab-signups')">📥 Se tilmeldinger</button>
+          <button class="btn btn-ghost" onclick="exportData()">⬇️ Eksporter data</button>
+          <button class="btn btn-ghost" onclick="resetToDefault()" style="color:var(--red)">↩️ Nulstil til standard</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTINGS -->
+    <div id="tab-listings" class="tab-panel">
+      <div class="section-head">
+        <h2>Håndværkere (<span id="listing-count">0</span>)</h2>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <input class="search-input" id="listing-search" placeholder="🔍 Søg firma eller by..." oninput="renderListingsTable()" />
+          <button class="btn btn-gold" onclick="openAddModal()">＋ Tilføj firma</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Firma</th><th>By</th><th>Fag</th><th>Telefon</th><th>Type</th><th>Rating</th><th>Handlinger</th></tr></thead>
+          <tbody id="listings-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SIGNUPS -->
+    <div id="tab-signups" class="tab-panel">
+      <div class="section-head">
+        <h2>Tilmeldinger (<span id="signup-count">0</span>)</h2>
+        <button class="btn btn-ghost" onclick="clearApproved()">Ryd godkendte</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Firma</th><th>Fag</th><th>Pakke</th><th>E-mail</th><th>Dato</th><th>Status</th><th>Handlinger</th></tr></thead>
+          <tbody id="signups-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div id="listing-modal" class="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modal-heading">Tilføj firma</h3>
+    <input type="hidden" id="edit-id" value="" />
+
+    <div class="form-row">
+      <div class="form-group"><label>Firmanavn *</label><input type="text" id="e-name" placeholder="f.eks. Jensen El ApS" /></div>
+      <div class="form-group"><label>Fag *</label>
+        <select id="e-trade">
+          <option value="elektriker">Elektriker</option>
+          <option value="vvs">VVS-installatør</option>
+          <option value="tømrer">Tømrer</option>
+          <option value="maler">Maler</option>
+          <option value="murer">Murer</option>
+          <option value="tag">Tag &amp; Isolering</option>
+          <option value="gulv">Gulvlægger</option>
+          <option value="kloak">Kloakmester</option>
+          <option value="glarmester">Glarmester</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label>By *</label>
+        <select id="e-city">
+          <option value="københavn">København</option>
+          <option value="aarhus">Aarhus</option>
+          <option value="odense">Odense</option>
+          <option value="aalborg">Aalborg</option>
+          <option value="esbjerg">Esbjerg</option>
+          <option value="vejle">Vejle</option>
+          <option value="randers">Randers</option>
+          <option value="roskilde">Roskilde</option>
+          <option value="herning">Herning</option>
+          <option value="silkeborg">Silkeborg</option>
+          <option value="horsens">Horsens</option>
+          <option value="kolding">Kolding</option>
+          <option value="næstved">Næstved</option>
+          <option value="viborg">Viborg</option>
+        </select>
+      </div>
+      <div class="form-group"><label>Område / Dækningszone</label><input type="text" id="e-area" placeholder="f.eks. Aarhus C og omegn" /></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label>Telefon *</label><input type="tel" id="e-phone" placeholder="12 34 56 78" /></div>
+      <div class="form-group"><label>Hjemmeside</label><input type="url" id="e-website" placeholder="https://..." /></div>
+    </div>
+
+    <div class="form-group"><label>Kort beskrivelse <span style="font-weight:400;color:var(--muted)">(vises kun på fremhævede kort)</span></label><textarea id="e-desc" rows="2" placeholder="Hvad specialiserer firmaet sig i?"></textarea></div>
+
+    <div class="form-row">
+      <div class="form-group"><label>Rating (1.0–5.0)</label><input type="number" id="e-rating" min="1" max="5" step="0.1" placeholder="4.5" /></div>
+      <div class="form-group"><label>Antal anmeldelser</label><input type="number" id="e-reviews" min="0" placeholder="12" /></div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group"><label>Breddegrad (lat) <span style="font-weight:400;color:var(--muted)">til kort</span></label><input type="number" id="e-lat" step="any" placeholder="56.163" /></div>
+      <div class="form-group"><label>Længdegrad (lng)</label><input type="number" id="e-lng" step="any" placeholder="10.203" /></div>
+    </div>
+
+    <div class="form-check">
+      <input type="checkbox" id="e-featured" />
+      <label for="e-featured"><strong>⭐ Fremhævet firma</strong> — vises øverst og har guldramme (betalt annonce)</label>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Annuller</button>
+      <button class="btn btn-gold" onclick="saveListing()">💾 Gem firma</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// AUTH
+// ============================================================
+if (sessionStorage.getItem('hg_admin') !== 'true') {
+  window.location.href = 'login.html';
+}
+function logout() {
+  sessionStorage.removeItem('hg_admin');
+  window.location.href = 'login.html';
+}
+
+// ============================================================
+// DEFAULT DATA — alle 44 firmaer, alle byer
+// ============================================================
+const DEFAULT_LISTINGS = [
+  // KØBENHAVN
+  { id:1,  city:'københavn', featured:true,  name:"Hovedstaden El-Service A/S",    trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør med speciale i boligrenovering og erhverv i hele Storkøbenhavn. Hurtigt tilbud og fleksible tider.",   phone:"32 12 34 56", website:"https://example.dk", area:"København & Frederiksberg", rating:4.9, reviewCount:47, lat:55.676, lng:12.568 },
+  { id:2,  city:'københavn', featured:true,  name:"KBH VVS Specialister ApS",      trade:"vvs",        tradeLabel:"VVS-installatør", desc:"Autoriseret VVS-firma med 20 år i branchen. Badeværelsesrenovering, varmepumper og gulvvarme til fast og fair pris.",           phone:"33 23 45 67", website:"https://example.dk", area:"Hele København og omegn",   rating:4.8, reviewCount:38, lat:55.680, lng:12.574 },
+  { id:3,  city:'københavn', featured:true,  name:"Nordsjællands Tømrer ApS",      trade:"tømrer",     tradeLabel:"Tømrer",          desc:"Erfarne tømrere og snedkere. Facaderenovering, kviste, altaner og carporte. Gratis besigtigelse.",                                phone:"28 99 11 44", website:"https://example.dk", area:"København N, Brønshøj",     rating:4.7, reviewCount:31, lat:55.690, lng:12.543 },
+  { id:4,  city:'københavn', featured:false, name:"Nørrebro Malerfirma",            trade:"maler",      tradeLabel:"Maler",           desc:"", phone:"26 11 22 33", website:"", area:"Nørrebro, Østerbro, Indre By", rating:4.5, reviewCount:12, lat:55.692, lng:12.548 },
+  { id:5,  city:'københavn', featured:false, name:"KBH Kloakmester Service",        trade:"kloak",      tradeLabel:"Kloakmester",     desc:"", phone:"32 88 77 66", website:"", area:"Hele København",              rating:4.3, reviewCount:9,  lat:55.672, lng:12.558 },
+  { id:6,  city:'københavn', featured:false, name:"Capital Glarmester",             trade:"glarmester", tradeLabel:"Glarmester",      desc:"", phone:"33 44 55 66", website:"", area:"København og Frederiksberg",  rating:4.2, reviewCount:7,  lat:55.668, lng:12.571 },
+  // AARHUS
+  { id:7,  city:'aarhus', featured:true,  name:"Aarhus El-Service ApS",            trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør med over 15 års erfaring. Alt fra fejlfinding til nye installationer i parcelhuse og erhverv.",         phone:"86 12 34 56", website:"https://example.dk", area:"Aarhus C & omegn",          rating:4.8, reviewCount:23, lat:56.157, lng:10.211 },
+  { id:8,  city:'aarhus', featured:true,  name:"Hansen VVS & Badeværelse",         trade:"vvs",        tradeLabel:"VVS-installatør", desc:"Autoriseret VVS-firma. Specialister i badeværelsesrenovering, gulvvarme og varmepumper. Hurtig respons på akutte opgaver.",      phone:"87 65 43 21", website:"https://example.dk", area:"Aarhus N, Risskov, Lystrup", rating:4.9, reviewCount:31, lat:56.187, lng:10.201 },
+  { id:9,  city:'aarhus', featured:true,  name:"Mikkelsen Tømrer & Snedker",       trade:"tømrer",     tradeLabel:"Tømrer",          desc:"Kvalitetstømreri til private og boligforeninger. Tagrenoveringer, kviste, carporte og terrasser. Gratis tilbud.",                  phone:"23 45 67 89", website:"https://example.dk", area:"Hele Aarhus Kommune",        rating:4.7, reviewCount:18, lat:56.163, lng:10.182 },
+  { id:10, city:'aarhus', featured:true,  name:"Brdr. Andersen Malerfirma",        trade:"maler",      tradeLabel:"Maler",           desc:"Professionelt malerfirma med fokus på grundig forbehandling og holdbare resultater. Indendørs, udendørs og tapetsering.",          phone:"40 20 10 30", website:"https://example.dk", area:"Aarhus S, Viby, Brabrand",   rating:4.6, reviewCount:14, lat:56.120, lng:10.169 },
+  { id:11, city:'aarhus', featured:false, name:"Larsen El",                        trade:"elektriker", tradeLabel:"Elektriker",      desc:"", phone:"86 99 11 22", website:"", area:"Aarhus V",                   rating:4.2, reviewCount:7,  lat:56.154, lng:10.168 },
+  { id:12, city:'aarhus', featured:false, name:"TAG & ISOLERING Aarhus",           trade:"tag",        tradeLabel:"Tag & Isolering", desc:"", phone:"71 44 55 66", website:"", area:"Hele Østjylland",            rating:4.4, reviewCount:11, lat:56.180, lng:10.225 },
+  { id:13, city:'aarhus', featured:false, name:"Kloakmester Søren Nielsen",        trade:"kloak",      tradeLabel:"Kloakmester",     desc:"", phone:"86 33 11 22", website:"", area:"Aarhus, Odder, Horsens",    rating:4.0, reviewCount:6,  lat:56.139, lng:10.204 },
+  // ODENSE
+  { id:14, city:'odense', featured:true,  name:"Odense El & Teknik A/S",           trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør på Fyn med speciale i smart home, solceller og ladestandere til elbil.",                               phone:"66 12 34 56", website:"https://example.dk", area:"Odense C og NV",            rating:4.7, reviewCount:29, lat:55.396, lng:10.388 },
+  { id:15, city:'odense', featured:true,  name:"Fyns VVS & Energi ApS",            trade:"vvs",        tradeLabel:"VVS-installatør", desc:"Autoriseret VVS på Fyn. Varmepumper, solvarme og energirenovering til private og boligforeninger.",                              phone:"63 23 45 67", website:"https://example.dk", area:"Odense og hele Fyn",        rating:4.8, reviewCount:22, lat:55.405, lng:10.375 },
+  { id:16, city:'odense', featured:false, name:"Andersen Maler Odense",            trade:"maler",      tradeLabel:"Maler",           desc:"", phone:"65 99 11 22", website:"", area:"Odense og omegn",            rating:4.4, reviewCount:8,  lat:55.389, lng:10.395 },
+  { id:17, city:'odense', featured:false, name:"Fyn Tømrermester",                 trade:"tømrer",     tradeLabel:"Tømrer",          desc:"", phone:"24 55 66 77", website:"", area:"Odense og Middelfart",      rating:4.2, reviewCount:6,  lat:55.385, lng:10.380 },
+  { id:18, city:'odense', featured:false, name:"Odense Murerforretning",           trade:"murer",      tradeLabel:"Murer",           desc:"", phone:"66 14 22 33", website:"", area:"Odense og Kerteminde",      rating:4.3, reviewCount:5,  lat:55.400, lng:10.404 },
+  // AALBORG
+  { id:19, city:'aalborg', featured:true,  name:"Aalborg El-Installation ApS",     trade:"elektriker", tradeLabel:"Elektriker",      desc:"Nordjyllands førende elinstallatør. Boliger, erhverv og industrianlæg. Tilbud inden 24 timer.",                                  phone:"98 12 34 56", website:"https://example.dk", area:"Aalborg og omegn",          rating:4.8, reviewCount:34, lat:57.048, lng:9.921 },
+  { id:20, city:'aalborg', featured:true,  name:"Nord VVS & Varmeteknik",          trade:"vvs",        tradeLabel:"VVS-installatør", desc:"Autoriseret VVS i Nordjylland. Specialister i varmepumper, badeværelse og fjernvarmetilslutning.",                               phone:"98 65 43 21", website:"https://example.dk", area:"Aalborg, Nørresundby",      rating:4.7, reviewCount:19, lat:57.053, lng:9.930 },
+  { id:21, city:'aalborg', featured:false, name:"Nordjysk Malerfirma",             trade:"maler",      tradeLabel:"Maler",           desc:"", phone:"30 11 22 33", website:"", area:"Aalborg og Nørresundby",   rating:4.3, reviewCount:7,  lat:57.043, lng:9.910 },
+  { id:22, city:'aalborg', featured:false, name:"Aalborg Tømrer & Snedker",        trade:"tømrer",     tradeLabel:"Tømrer",          desc:"", phone:"42 55 66 77", website:"", area:"Aalborg og Jammerbugt",   rating:4.1, reviewCount:5,  lat:57.040, lng:9.935 },
+  // ESBJERG
+  { id:23, city:'esbjerg', featured:true,  name:"Vestjyllands El-Service ApS",     trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør i Esbjerg. Industriel, marin og privat installation. 24/7 vagtservice.",                               phone:"75 12 34 56", website:"https://example.dk", area:"Esbjerg, Fanø og Varde",    rating:4.6, reviewCount:15, lat:55.476, lng:8.459 },
+  { id:24, city:'esbjerg', featured:false, name:"Esbjerg VVS & Kloak",             trade:"vvs",        tradeLabel:"VVS-installatør", desc:"", phone:"75 65 43 21", website:"", area:"Esbjerg og Ribe",          rating:4.2, reviewCount:8,  lat:55.470, lng:8.452 },
+  { id:25, city:'esbjerg', featured:false, name:"Sønderjyllands Maler",            trade:"maler",      tradeLabel:"Maler",           desc:"", phone:"74 12 33 44", website:"", area:"Esbjerg og Kolding",       rating:4.1, reviewCount:4,  lat:55.482, lng:8.470 },
+  // VEJLE
+  { id:26, city:'vejle', featured:true,  name:"Vejle El & Smart Home",             trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elektriker med speciale i smart home, solceller og ladestandere. Betjener hele Trekantområdet.",                     phone:"75 82 34 56", website:"https://example.dk", area:"Vejle og Trekantområdet",  rating:4.7, reviewCount:21, lat:55.709, lng:9.536 },
+  { id:27, city:'vejle', featured:true,  name:"Trekant VVS & Badeværelse",         trade:"vvs",        tradeLabel:"VVS-installatør", desc:"Autoriseret VVS til private og erhverv i Trekantområdet. Varmepumper, badeværelser og gulvvarme.",                               phone:"75 82 65 43", website:"https://example.dk", area:"Vejle, Kolding, Fredericia", rating:4.6, reviewCount:17, lat:55.715, lng:9.528 },
+  { id:28, city:'vejle', featured:false, name:"Vejle Tømrerfirma",                 trade:"tømrer",     tradeLabel:"Tømrer",          desc:"", phone:"75 82 11 22", website:"", area:"Vejle og Hedensted",       rating:4.3, reviewCount:8,  lat:55.703, lng:9.548 },
+  // RANDERS
+  { id:29, city:'randers', featured:true,  name:"Randers El-Mester ApS",           trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør i Randers og omegn. Bolig, landbrug og erhverv. Akutservice.",                                        phone:"86 42 34 56", website:"https://example.dk", area:"Randers og Favrskov",      rating:4.6, reviewCount:13, lat:56.461, lng:10.036 },
+  { id:30, city:'randers', featured:false, name:"Randers VVS Service",             trade:"vvs",        tradeLabel:"VVS-installatør", desc:"", phone:"86 42 65 43", website:"", area:"Randers og Hobro",         rating:4.2, reviewCount:6,  lat:56.455, lng:10.045 },
+  // ROSKILDE
+  { id:31, city:'roskilde', featured:true,  name:"Roskilde El & Teknik",           trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør vest for København. Specialister i energirenovering og EV-ladestandere.",                              phone:"46 32 34 56", website:"https://example.dk", area:"Roskilde og Lejre",         rating:4.6, reviewCount:17, lat:55.642, lng:12.087 },
+  { id:32, city:'roskilde', featured:false, name:"Sjællandsk Malerfirma",          trade:"maler",      tradeLabel:"Maler",           desc:"", phone:"46 32 65 43", website:"", area:"Roskilde og Holbæk",       rating:4.4, reviewCount:9,  lat:55.648, lng:12.095 },
+  // HERNING
+  { id:33, city:'herning', featured:true,  name:"Midtjyllands El & Teknik",        trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør i Midt- og Vestjylland. Bolig, landbrug og erhverv. 24/7.",                                            phone:"97 22 34 56", website:"https://example.dk", area:"Herning og Ikast",          rating:4.5, reviewCount:13, lat:56.139, lng:8.973 },
+  { id:34, city:'herning', featured:false, name:"Herning VVS Service",             trade:"vvs",        tradeLabel:"VVS-installatør", desc:"", phone:"97 22 65 43", website:"", area:"Herning og Holstebro",     rating:4.2, reviewCount:6,  lat:56.132, lng:8.980 },
+  // SILKEBORG
+  { id:35, city:'silkeborg', featured:true,  name:"Silkeborg El-Service",          trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør i hjertet af Jylland. Specialister i energioptimering og solceller.",                                 phone:"86 82 34 56", website:"https://example.dk", area:"Silkeborg og Skanderborg",  rating:4.7, reviewCount:16, lat:56.172, lng:9.551 },
+  { id:36, city:'silkeborg', featured:false, name:"Silkeborg Tømrerfirma",         trade:"tømrer",     tradeLabel:"Tømrer",          desc:"", phone:"86 82 65 43", website:"", area:"Silkeborg og Viborg",      rating:4.3, reviewCount:7,  lat:56.165, lng:9.558 },
+  // HORSENS
+  { id:37, city:'horsens', featured:true,  name:"Horsens El-Installatør",          trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør i Horsens. Bolig, erhverv og havneområdet. Hurtigt tilbud.",                                          phone:"75 62 34 56", website:"https://example.dk", area:"Horsens og Hedensted",     rating:4.5, reviewCount:11, lat:55.860, lng:9.844 },
+  { id:38, city:'horsens', featured:false, name:"Horsens VVS & Varme",             trade:"vvs",        tradeLabel:"VVS-installatør", desc:"", phone:"75 62 65 43", website:"", area:"Horsens og Skanderborg",   rating:4.2, reviewCount:5,  lat:55.866, lng:9.851 },
+  // KOLDING
+  { id:39, city:'kolding', featured:true,  name:"Kolding El & Teknik ApS",         trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør med base i Kolding. Servicerer hele Syd- og Sønderjylland.",                                          phone:"75 52 34 56", website:"https://example.dk", area:"Kolding og Haderslev",     rating:4.6, reviewCount:14, lat:55.491, lng:9.472 },
+  { id:40, city:'kolding', featured:false, name:"Kolding Murerforretning",         trade:"murer",      tradeLabel:"Murer",           desc:"", phone:"75 52 65 43", website:"", area:"Kolding og omegn",         rating:4.1, reviewCount:6,  lat:55.498, lng:9.480 },
+  // NÆSTVED
+  { id:41, city:'næstved', featured:true,  name:"Næstved El-Service",              trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør på Sydsjælland. Bolig, erhverv og landbrug.",                                                         phone:"55 72 34 56", website:"https://example.dk", area:"Næstved og Vordingborg",   rating:4.5, reviewCount:10, lat:55.230, lng:11.762 },
+  { id:42, city:'næstved', featured:false, name:"Sydsjællands VVS",               trade:"vvs",        tradeLabel:"VVS-installatør", desc:"", phone:"55 72 65 43", website:"", area:"Næstved og Faxe",          rating:4.0, reviewCount:4,  lat:55.236, lng:11.770 },
+  // VIBORG
+  { id:43, city:'viborg', featured:true,  name:"Viborg El & Kraft ApS",            trade:"elektriker", tradeLabel:"Elektriker",      desc:"Autoriseret elinstallatør centralt i Jylland. Bolig, landbrug og industri.",                                                     phone:"86 62 34 56", website:"https://example.dk", area:"Viborg og Skive",           rating:4.6, reviewCount:12, lat:56.453, lng:9.403 },
+  { id:44, city:'viborg', featured:false, name:"Viborg Tømrermester",              trade:"tømrer",     tradeLabel:"Tømrer",          desc:"", phone:"86 62 65 43", website:"", area:"Viborg og Bjerringbro",    rating:4.2, reviewCount:5,  lat:56.459, lng:9.412 },
+];
+
+const TRADE_LABELS = { elektriker:'Elektriker', vvs:'VVS-installatør', tømrer:'Tømrer', maler:'Maler', murer:'Murer', tag:'Tag & Isolering', gulv:'Gulvlægger', kloak:'Kloakmester', glarmester:'Glarmester' };
+const CITY_LABELS  = { københavn:'København', aarhus:'Aarhus', odense:'Odense', aalborg:'Aalborg', esbjerg:'Esbjerg', vejle:'Vejle', randers:'Randers', roskilde:'Roskilde', herning:'Herning', silkeborg:'Silkeborg', horsens:'Horsens', kolding:'Kolding', næstved:'Næstved', viborg:'Viborg' };
+
+function getListings() {
+  const s = localStorage.getItem('hg_listings');
+  if (s) { try { return JSON.parse(s); } catch(e) {} }
+  return JSON.parse(JSON.stringify(DEFAULT_LISTINGS));
+}
+function saveListings(data) { localStorage.setItem('hg_listings', JSON.stringify(data)); }
+function getSignups()  { const s = localStorage.getItem('hg_signups');  if (s) { try { return JSON.parse(s); } catch(e) {} } return []; }
+function saveSignups(data) { localStorage.setItem('hg_signups', JSON.stringify(data)); }
+
+// ============================================================
+// TABS
+// ============================================================
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('nav-' + id.replace('tab-','')).classList.add('active');
+  if (id === 'tab-listings') renderListingsTable();
+  if (id === 'tab-signups')  renderSignupsTable();
+  if (id === 'tab-overview') renderOverview();
+}
+
+// ============================================================
+// OVERVIEW
+// ============================================================
+function renderOverview() {
+  const listings = getListings();
+  const signups  = getSignups().filter(s => s.status === 'pending');
+  const cities   = new Set(listings.map(l => l.city)).size;
+  document.getElementById('ov-total').textContent    = listings.length;
+  document.getElementById('ov-featured').textContent = listings.filter(l => l.featured).length;
+  document.getElementById('ov-signups').textContent  = signups.length;
+  document.getElementById('ov-cities').textContent   = cities;
+}
+
+function updatePendingBadge() {
+  const count = getSignups().filter(s => s.status === 'pending').length;
+  document.getElementById('pending-badge').textContent = count > 0 ? count : '';
+}
+
+// ============================================================
+// LISTINGS TABLE
+// ============================================================
+function renderListingsTable() {
+  const listings = getListings();
+  const q = (document.getElementById('listing-search')?.value || '').toLowerCase();
+  const filtered = q ? listings.filter(l =>
+    l.name.toLowerCase().includes(q) ||
+    (l.city || '').toLowerCase().includes(q) ||
+    l.tradeLabel.toLowerCase().includes(q)
+  ) : listings;
+  document.getElementById('listing-count').textContent = listings.length;
+
+  const tbody = document.getElementById('listings-tbody');
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">🔍</div><p>Ingen firmaer fundet.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = filtered.map(l => `
+    <tr>
+      <td><strong>${l.name}</strong>${l.website ? `<br><a href="${l.website}" target="_blank" style="font-size:.75rem;color:var(--link)">${l.website}</a>` : ''}</td>
+      <td><span class="city-badge">${CITY_LABELS[l.city] || l.city || '—'}</span></td>
+      <td>${l.tradeLabel}</td>
+      <td><a href="tel:${l.phone.replace(/\s/g,'')}">${l.phone}</a></td>
+      <td><span class="badge ${l.featured ? 'featured' : 'regular'}">${l.featured ? '⭐ Fremhævet' : 'Gratis'}</span></td>
+      <td style="font-size:.85rem">${l.rating ? `★ ${Number(l.rating).toFixed(1)} (${l.reviewCount})` : '—'}</td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="openEditModal(${l.id})">✏️</button>
+        <button class="btn btn-ghost" onclick="toggleFeatured(${l.id})" title="${l.featured ? 'Fjern fremhævning' : 'Fremhæv firma'}" style="color:${l.featured ? 'var(--muted)' : 'var(--gold-dark)'}">${l.featured ? '▽' : '⭐'}</button>
+        <button class="btn btn-ghost" onclick="deleteListing(${l.id})" style="color:var(--red)">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ============================================================
+// SIGNUPS TABLE
+// ============================================================
+function renderSignupsTable() {
+  const signups = getSignups();
+  document.getElementById('signup-count').textContent = signups.length;
+  const tbody = document.getElementById('signups-tbody');
+  if (signups.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><div class="icon">📥</div><p>Ingen tilmeldinger endnu.<br>De vises her når folk klikker "Vælg pakke" på siden.</p></div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = signups.slice().reverse().map(s => `
+    <tr>
+      <td><strong>${s.name}</strong><br><small style="color:var(--muted)">${s.phone}</small></td>
+      <td>${s.trade}</td>
+      <td><span class="badge ${s.plan.toLowerCase()}">${s.plan}</span><br><small style="color:var(--muted)">${s.amount} kr/md.</small></td>
+      <td><a href="mailto:${s.email}" style="font-size:.85rem">${s.email}</a></td>
+      <td style="font-size:.8rem;color:var(--muted)">${new Date(s.submittedAt).toLocaleDateString('da-DK')}</td>
+      <td><span class="badge ${s.status}">${s.status === 'pending' ? '⏳ Afventer' : '✅ Aktiveret'}</span></td>
+      <td style="display:flex;gap:6px;flex-wrap:wrap">
+        ${s.status === 'pending' ? `<button class="btn btn-green" onclick="activateSignup('${s.id}')">✅ Aktivér</button>` : ''}
+        <button class="btn btn-ghost" onclick="deleteSignup('${s.id}')" style="color:var(--red)">🗑️</button>
+      </td>
+    </tr>`).join('');
+}
+
+// ============================================================
+// LISTING CRUD
+// ============================================================
+function openAddModal() {
+  document.getElementById('modal-heading').textContent = 'Tilføj nyt firma';
+  document.getElementById('edit-id').value = '';
+  ['e-name','e-phone','e-website','e-area','e-desc','e-lat','e-lng'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('e-trade').value    = 'elektriker';
+  document.getElementById('e-city').value     = 'aarhus';
+  document.getElementById('e-rating').value   = '';
+  document.getElementById('e-reviews').value  = '';
+  document.getElementById('e-featured').checked = false;
+  document.getElementById('listing-modal').classList.add('open');
+}
+
+function openEditModal(id) {
+  const l = getListings().find(x => x.id === id);
+  if (!l) return;
+  document.getElementById('modal-heading').textContent = 'Rediger firma';
+  document.getElementById('edit-id').value        = id;
+  document.getElementById('e-name').value         = l.name;
+  document.getElementById('e-trade').value        = l.trade;
+  document.getElementById('e-city').value         = l.city || 'aarhus';
+  document.getElementById('e-phone').value        = l.phone;
+  document.getElementById('e-website').value      = l.website || '';
+  document.getElementById('e-area').value         = l.area || '';
+  document.getElementById('e-desc').value         = l.desc || '';
+  document.getElementById('e-rating').value       = l.rating || '';
+  document.getElementById('e-reviews').value      = l.reviewCount || '';
+  document.getElementById('e-lat').value          = l.lat || '';
+  document.getElementById('e-lng').value          = l.lng || '';
+  document.getElementById('e-featured').checked   = l.featured;
+  document.getElementById('listing-modal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('listing-modal').classList.remove('open'); }
+
+function saveListing() {
+  const name  = document.getElementById('e-name').value.trim();
+  const phone = document.getElementById('e-phone').value.trim();
+  if (!name || !phone) { alert('Firmanavn og telefon er påkrævet.'); return; }
+
+  const trade    = document.getElementById('e-trade').value;
+  const city     = document.getElementById('e-city').value;
+  const listings = getListings();
+  const editId   = parseInt(document.getElementById('edit-id').value) || null;
+
+  const entry = {
+    id:          editId || Date.now(),
+    name, trade, city,
+    tradeLabel:  TRADE_LABELS[trade] || trade,
+    phone,
+    website:     document.getElementById('e-website').value.trim(),
+    area:        document.getElementById('e-area').value.trim(),
+    desc:        document.getElementById('e-desc').value.trim(),
+    rating:      parseFloat(document.getElementById('e-rating').value) || null,
+    reviewCount: parseInt(document.getElementById('e-reviews').value) || 0,
+    lat:         parseFloat(document.getElementById('e-lat').value) || null,
+    lng:         parseFloat(document.getElementById('e-lng').value) || null,
+    featured:    document.getElementById('e-featured').checked,
+  };
+
+  if (editId) {
+    const idx = listings.findIndex(l => l.id === editId);
+    if (idx !== -1) listings[idx] = entry;
+  } else {
+    listings.push(entry);
+  }
+
+  saveListings(listings);
+  closeModal();
+  renderListingsTable();
+  renderOverview();
+}
+
+function deleteListing(id) {
+  if (!confirm('Slet dette firma?')) return;
+  saveListings(getListings().filter(l => l.id !== id));
+  renderListingsTable();
+  renderOverview();
+}
+
+function toggleFeatured(id) {
+  const listings = getListings();
+  const l = listings.find(x => x.id === id);
+  if (l) l.featured = !l.featured;
+  saveListings(listings);
+  renderListingsTable();
+  renderOverview();
+}
+
+// ============================================================
+// SIGNUP ACTIONS
+// ============================================================
+function activateSignup(sid) {
+  const signups = getSignups();
+  const signup  = signups.find(s => String(s.id) === String(sid));
+  if (!signup) return;
+  signup.status = 'active';
+  saveSignups(signups);
+
+  const listings = getListings();
+  const tradeKey = Object.entries(TRADE_LABELS).find(([k,v]) => v.toLowerCase().includes(signup.trade.toLowerCase()))?.[0] || 'elektriker';
+  listings.push({
+    id: Date.now(), name: signup.name,
+    trade: tradeKey, tradeLabel: TRADE_LABELS[tradeKey],
+    city: 'aarhus',
+    phone: signup.phone, website: signup.website || '',
+    area: signup.area || 'Danmark',
+    desc: '', rating: null, reviewCount: 0,
+    featured: signup.plan !== 'Basic',
+    lat: null, lng: null,
+  });
+  saveListings(listings);
+  renderSignupsTable();
+  renderOverview();
+  updatePendingBadge();
+}
+
+function deleteSignup(sid) {
+  if (!confirm('Fjern denne tilmelding?')) return;
+  saveSignups(getSignups().filter(s => String(s.id) !== String(sid)));
+  renderSignupsTable();
+  updatePendingBadge();
+}
+
+function clearApproved() {
+  saveSignups(getSignups().filter(s => s.status === 'pending'));
+  renderSignupsTable();
+}
+
+// ============================================================
+// MISC
+// ============================================================
+function exportData() {
+  const data = { listings: getListings(), signups: getSignups(), exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `haandvaerkerguiden-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+function resetToDefault() {
+  if (!confirm('Nulstil ALLE firmaer til de 44 standard-firmaer? Dette kan ikke fortrydes.')) return;
+  localStorage.removeItem('hg_listings');
+  renderListingsTable();
+  renderOverview();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ============================================================
+// INIT
+// ============================================================
+renderOverview();
+updatePendingBadge();
+</script>
+</body>
+</html>

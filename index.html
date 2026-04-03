@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HåndværkerGuiden Danmark – Find lokale fagfolk i din by</title>
+  <meta name="description" content="Find de bedste håndværkere i hele Danmark. København, Aarhus, Odense, Aalborg og mere. Elektrikere, VVS, tømrere, malere og meget mere." />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="logo">
+      <span class="logo-icon">🔧</span>
+      <span class="logo-text">HåndværkerGuiden<span class="logo-city">Danmark</span></span>
+    </div>
+    <nav class="main-nav" id="main-nav">
+      <a href="#kategorier">Kategorier</a>
+      <a href="#haandvaerkere">Håndværkere</a>
+      <a href="#kort">Kort</a>
+      <a href="#send-opgave">Send opgave</a>
+      <a href="#bliv-listesat" class="btn btn-outline">Bliv listesat</a>
+    </nav>
+    <button class="nav-toggle" aria-label="Menu" onclick="toggleNav()">☰</button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <h1>Find den rette håndværker<br><span class="hero-highlight">i hele Danmark</span></h1>
+    <p class="hero-sub">Lokale fagfolk i din by — elektrikere, VVS, tømrere, malere og mere</p>
+    <div class="search-bar">
+      <select id="city-filter" onchange="filterListings()">
+        <option value="">Alle byer</option>
+        <option value="københavn">København</option>
+        <option value="aarhus">Aarhus</option>
+        <option value="odense">Odense</option>
+        <option value="aalborg">Aalborg</option>
+        <option value="esbjerg">Esbjerg</option>
+        <option value="vejle">Vejle</option>
+        <option value="randers">Randers</option>
+        <option value="roskilde">Roskilde</option>
+        <option value="herning">Herning</option>
+        <option value="silkeborg">Silkeborg</option>
+        <option value="horsens">Horsens</option>
+        <option value="kolding">Kolding</option>
+        <option value="næstved">Næstved</option>
+        <option value="viborg">Viborg</option>
+      </select>
+      <select id="trade-filter" onchange="filterListings()">
+        <option value="">Alle fag</option>
+        <option value="elektriker">Elektriker</option>
+        <option value="vvs">VVS-installatør</option>
+        <option value="tømrer">Tømrer</option>
+        <option value="maler">Maler</option>
+        <option value="murer">Murer</option>
+        <option value="tag">Tag &amp; Isolering</option>
+        <option value="gulv">Gulvlægger</option>
+        <option value="kloak">Kloakmester</option>
+        <option value="glarmester">Glarmester</option>
+      </select>
+      <input type="text" id="search-input" placeholder="Søg firma, by eller fag..." oninput="filterListings()" />
+      <button class="btn btn-primary" onclick="filterListings()">Søg</button>
+    </div>
+    <div id="city-chips" class="city-chips"></div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories" id="kategorier">
+  <div class="container">
+    <h2 class="section-title">Søg efter fag</h2>
+    <div class="cat-grid">
+      <button class="cat-card" onclick="setFilter('elektriker')"><span class="cat-icon">⚡</span><span>Elektriker</span></button>
+      <button class="cat-card" onclick="setFilter('vvs')"><span class="cat-icon">🔩</span><span>VVS</span></button>
+      <button class="cat-card" onclick="setFilter('tømrer')"><span class="cat-icon">🪵</span><span>Tømrer</span></button>
+      <button class="cat-card" onclick="setFilter('maler')"><span class="cat-icon">🖌️</span><span>Maler</span></button>
+      <button class="cat-card" onclick="setFilter('murer')"><span class="cat-icon">🧱</span><span>Murer</span></button>
+      <button class="cat-card" onclick="setFilter('tag')"><span class="cat-icon">🏠</span><span>Tag &amp; Isolering</span></button>
+      <button class="cat-card" onclick="setFilter('gulv')"><span class="cat-icon">🪟</span><span>Gulvlægger</span></button>
+      <button class="cat-card" onclick="setFilter('kloak')"><span class="cat-icon">🔧</span><span>Kloakmester</span></button>
+      <button class="cat-card" onclick="setFilter('')"><span class="cat-icon">📋</span><span>Vis alle</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<section class="stats-bar" id="stats-bar">
+  <div class="container stats-grid">
+    <div class="stat-item"><div class="stat-number" data-target="44">0</div><div class="stat-label">Registrerede firmaer</div></div>
+    <div class="stat-item"><div class="stat-number" data-target="9">0</div><div class="stat-label">Fagkategorier</div></div>
+    <div class="stat-item"><div class="stat-number" data-target="20">0</div><div class="stat-label">Fremhævede firmaer</div></div>
+    <div class="stat-item"><div class="stat-number" data-target="14">0</div><div class="stat-label">Byer i Danmark</div></div>
+  </div>
+</section>
+
+<!-- LISTINGS -->
+<section class="listings-section" id="haandvaerkere">
+  <div class="container">
+    <div class="listings-header">
+      <h2 class="section-title">Håndværkere i Danmark</h2>
+      <span id="result-count" class="result-count"></span>
+    </div>
+    <div class="featured-label">⭐ Fremhævede firmaer</div>
+    <div id="featured-grid" class="listings-grid"></div>
+    <div class="regular-label">Øvrige firmaer</div>
+    <div id="regular-grid" class="listings-grid"></div>
+    <div id="no-results" class="no-results" style="display:none;">
+      Ingen resultater fundet. <a href="#bliv-listesat">Tilmeld dit firma?</a>
+    </div>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="map-section" id="kort">
+  <div class="container map-header">
+    <h2 class="section-title">Håndværkere på kortet</h2>
+    <p class="section-sub">
+      <span class="map-legend gold"></span> Fremhævet firma &nbsp;·&nbsp;
+      <span class="map-legend blue"></span> Gratis firma — klik for kontaktinfo &nbsp;·&nbsp; Hele Danmark dækket
+    </p>
+  </div>
+  <div id="haandvaerker-map"></div>
+</section>
+
+<!-- JOB REQUEST -->
+<section class="jobrequest-section" id="send-opgave">
+  <div class="container">
+    <h2 class="section-title">Beskriv din opgave</h2>
+    <p class="section-sub">Udfyld formularen — vi videresender til relevante håndværkere i dit område</p>
+    <div class="jobrequest-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Fag *</label>
+          <select id="jr-trade">
+            <option value="">Vælg fag</option>
+            <option>Elektriker</option><option>VVS-installatør</option><option>Tømrer</option>
+            <option>Maler</option><option>Murer</option><option>Tag &amp; Isolering</option>
+            <option>Gulvlægger</option><option>Kloakmester</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Dit navn *</label>
+          <input type="text" id="jr-name" placeholder="Navn" />
+        </div>
+        <div class="form-group">
+          <label>Telefon</label>
+          <input type="tel" id="jr-phone" placeholder="12 34 56 78" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Beskriv opgaven * <span class="char-count" id="jr-chars">0/600</span></label>
+        <textarea id="jr-desc" rows="4" maxlength="600" placeholder="Beskriv hvad der skal laves, adresse, ønsket tidspunkt..." oninput="document.getElementById('jr-chars').textContent=this.value.length+'/600'"></textarea>
+      </div>
+      <button class="btn btn-primary" onclick="submitJobRequest()">Send forespørgsel via e-mail ✉️</button>
+      <p class="jobrequest-note">Din e-mail-klient åbnes med en færdigskrevet besked klar til afsendelse.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="bliv-listesat">
+  <div class="container">
+    <h2 class="section-title">Bliv listesat på HåndværkerGuiden</h2>
+    <p class="section-sub">Nå ud til kunder i hele Danmark, der aktivt søger håndværkere i din by</p>
+    <div class="pricing-grid">
+
+      <div class="pricing-card">
+        <div class="pricing-tier basic-tier">Basic</div>
+        <div class="pricing-price">99 kr<span>/md.</span></div>
+        <ul class="pricing-features">
+          <li>✓ Firmanavn og fag</li>
+          <li>✓ Telefonnummer</li>
+          <li>✓ By/område</li>
+          <li class="muted">✗ Ingen fremhævning</li>
+          <li class="muted">✗ Ingen beskrivelse</li>
+          <li class="muted">✗ Ingen hjemmesidelink</li>
+        </ul>
+        <button class="btn btn-outline" onclick="openPayment('Basic', 99)">Vælg Basic</button>
+      </div>
+
+      <div class="pricing-card featured-card">
+        <div class="popular-badge">Mest populær</div>
+        <div class="pricing-tier gold-tier">Gold</div>
+        <div class="pricing-price">199 kr<span>/md.</span></div>
+        <ul class="pricing-features">
+          <li>✓ Fremhævet placering øverst</li>
+          <li>✓ ⭐ Gold badge</li>
+          <li>✓ Firmanavn og fag</li>
+          <li>✓ Telefonnummer + hjemmesidelink</li>
+          <li>✓ Kort firmabeskrivelse</li>
+          <li class="muted">✗ Ingen logo</li>
+        </ul>
+        <button class="btn btn-primary" onclick="openPayment('Gold', 199)">Vælg Gold</button>
+      </div>
+
+      <div class="pricing-card premium-card">
+        <div class="pricing-tier premium-tier">Premium</div>
+        <div class="pricing-price">299 kr<span>/md.</span></div>
+        <ul class="pricing-features">
+          <li>✓ Alt i Gold</li>
+          <li>✓ Logo upload</li>
+          <li>✓ Udvidet beskrivelse</li>
+          <li>✓ Fremhævet i alle kategorier</li>
+          <li>✓ Kontaktformular på profil</li>
+          <li>✓ Månedlig visningsstatistik</li>
+        </ul>
+        <button class="btn btn-premium" onclick="openPayment('Premium', 299)">Vælg Premium</button>
+      </div>
+
+    </div>
+    <p class="pricing-note">Ingen binding · Opsig når som helst · Betaling via MobilePay</p>
+
+    <div class="contact-strip">
+      <div class="contact-item">
+        <span class="contact-icon">✉️</span>
+        <div><div class="contact-label">Spørgsmål?</div><a href="mailto:stefymaestro@proton.me">stefymaestro@proton.me</a></div>
+      </div>
+      <div class="contact-divider"></div>
+      <div class="contact-item">
+        <span class="contact-icon">📱</span>
+        <div><div class="contact-label">MobilePay</div><strong>50 35 83 67</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAYMENT MODAL -->
+<div id="payment-modal" class="modal-overlay" onclick="closePaymentIfOutside(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closePayment()">✕</button>
+    <div class="modal-header">
+      <div id="modal-plan-badge" class="modal-plan-badge">Gold</div>
+      <h3 id="modal-title">Tilmeld Gold — 199 kr/md.</h3>
+    </div>
+
+    <div id="step-1" class="modal-step">
+      <p class="modal-intro">Udfyld dine oplysninger, og betal derefter via MobilePay.</p>
+      <div class="form-group"><label>Firmanavn *</label><input type="text" id="f-name" placeholder="f.eks. Jensen El ApS" /></div>
+      <div class="form-group"><label>Fag *</label><input type="text" id="f-trade" placeholder="f.eks. Elektriker" /></div>
+      <div class="form-group"><label>Telefon *</label><input type="tel" id="f-phone" placeholder="12 34 56 78" /></div>
+      <div class="form-group"><label>E-mail *</label><input type="email" id="f-email" placeholder="din@email.dk" /></div>
+      <div class="form-group"><label>Hjemmeside</label><input type="url" id="f-website" placeholder="https://..." /></div>
+      <button class="btn btn-primary btn-full" onclick="goToPayStep()">Fortsæt til betaling →</button>
+    </div>
+
+    <div id="step-2" class="modal-step" style="display:none;">
+      <div class="mobilepay-box">
+        <div class="mp-logo">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="#5A78FF"/><text x="18" y="24" text-anchor="middle" font-size="18" fill="white" font-family="sans-serif">M</text></svg>
+          <span>MobilePay</span>
+        </div>
+        <div class="mp-number">50 35 83 67</div>
+        <div class="mp-amount" id="mp-amount-display">199 kr</div>
+        <div class="mp-instruction">Send beløbet til <strong>50 35 83 67</strong><br>Skriv <strong id="mp-comment"></strong> i beskedfeltet</div>
+        <a id="mp-deeplink" href="#" class="btn btn-mobilepay" target="_blank">
+          <svg width="20" height="20" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="10" fill="white"/><text x="18" y="24" text-anchor="middle" font-size="18" fill="#5A78FF" font-family="sans-serif">M</text></svg>
+          Åbn MobilePay-app
+        </a>
+        <p class="mp-fallback">Har du ikke appen? Send manuelt til <strong>50 35 83 67</strong></p>
+      </div>
+      <div class="confirm-box">
+        <p>Efter betaling — send en e-mail til <a href="mailto:stefymaestro@proton.me">stefymaestro@proton.me</a> med dit firmanavn, så aktiverer vi din annonce inden for 24 timer.</p>
+        <a id="confirm-email-link" href="#" class="btn btn-outline btn-full">Send bekræftelses-e-mail ✉️</a>
+      </div>
+      <button class="back-link" onclick="goBackToForm()">← Ret oplysninger</button>
+    </div>
+
+    <div id="step-3" class="modal-step" style="display:none;">
+      <div class="done-box">
+        <div class="done-icon">✅</div>
+        <h4>Tak!</h4>
+        <p>Vi aktiverer din annonce inden for <strong>24 timer</strong>, når vi har modtaget din betaling og e-mail.</p>
+        <button class="btn btn-primary btn-full" onclick="closePayment()">Luk</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHAT WIDGET -->
+<div id="chat-widget">
+  <button id="chat-toggle" onclick="toggleChat()" aria-label="Åbn chat-assistent" title="Spørg vores assistent">
+    <span id="chat-icon">💬</span>
+  </button>
+  <div id="chat-panel" style="display:none;">
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <span class="chat-avatar">🔧</span>
+        <div>
+          <div style="font-weight:700">HåndværkerGuiden</div>
+          <div style="font-size:.75rem;opacity:.8">Assistent · svarer øjeblikkeligt</div>
+        </div>
+      </div>
+      <button onclick="toggleChat()" aria-label="Luk chat">✕</button>
+    </div>
+    <div id="chat-messages" class="chat-messages"></div>
+    <div class="chat-suggestions" id="chat-suggestions">
+      <button onclick="quickAsk('Hvad koster det at liste mit firma?')">💰 Priser</button>
+      <button onclick="quickAsk('Hvilke byer dækker I?')">🇩🇰 Byer</button>
+      <button onclick="quickAsk('Find elektriker i København')">⚡ El KBH</button>
+      <button onclick="quickAsk('Find VVS i Aarhus')">🔩 VVS ARH</button>
+    </div>
+    <div class="chat-input-row">
+      <input type="text" id="chat-input" placeholder="Stil et spørgsmål..." onkeydown="chatEnter(event)" />
+      <button onclick="sendChat()" class="btn btn-primary">↑</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <span class="logo-icon">🔧</span> HåndværkerGuiden Danmark
+      <p>Lokale fagfolk i hele Danmark — nemt at finde, nemt at kontakte.</p>
+    </div>
+    <div class="footer-links">
+      <strong>For firmaer</strong>
+      <a href="#bliv-listesat">Bliv listesat</a>
+      <a href="mailto:stefymaestro@proton.me">Kontakt os</a>
+      <a href="login.html">Admin login</a>
+    </div>
+    <div class="footer-links">
+      <strong>Fag</strong>
+      <a href="#" onclick="setFilter('elektriker')">Elektrikere</a>
+      <a href="#" onclick="setFilter('vvs')">VVS</a>
+      <a href="#" onclick="setFilter('tømrer')">Tømrere</a>
+      <a href="#" onclick="setFilter('maler')">Malere</a>
+    </div>
+    <div class="footer-links">
+      <strong>Information</strong>
+      <a href="privacy.html">Privatlivspolitik</a>
+      <a href="#send-opgave">Send en opgave</a>
+      <a href="#kort">Kort over firmaer</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 HåndværkerGuiden Danmark · <a href="mailto:stefymaestro@proton.me">stefymaestro@proton.me</a> · MobilePay: 50 35 83 67 · <a href="privacy.html">Privatlivspolitik</a></p>
+  </div>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="script.js"></script>
+<script>
+function quickAsk(q) {
+  document.getElementById('chat-suggestions').style.display = 'none';
+  document.getElementById('chat-input').value = q;
+  sendChat();
+}
+</script>
+</body>
+</html>
